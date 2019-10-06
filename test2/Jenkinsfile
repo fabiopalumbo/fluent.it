@@ -30,7 +30,7 @@ pipeline {
 			}
 
                   }
-
+		}
            }
               
 		stage('Upload File to S3') {
@@ -54,8 +54,8 @@ pipeline {
                  		sh 'echo "#######################################"'
 				terraformS3Backend()
 
-                  		echo 'Destroy Cluster...'
-                		destroyCluster()
+                  		echo 'Destroy Terraform.'
+                		destroyTerraform()
 
 				
             		}
