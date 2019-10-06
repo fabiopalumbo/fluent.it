@@ -6,7 +6,10 @@ resource "aws_s3_bucket" "my_bucket" {
   }
 
   provisioner "local-exec" {
-     command = "aws c3 cp path_to_my file ${aws_s3_bucket.my-bucket.bucket}"
+     command = 
+      "date '+%m%d%y %H%M%S' > /tmp/test1.txt",
+      "date '+%m%d%y %H%M%S' > /tmp/test2.txt",
+      "aws c3 cp /tmp/* ${aws_s3_bucket.my-bucket.bucket}"
   }
 
 }
