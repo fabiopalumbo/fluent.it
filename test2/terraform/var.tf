@@ -1,5 +1,5 @@
 ## Terraform variables
 
-variable "mybucket" {}
+variable "mybucket" { default = "test-bucket" }
 
-variable "region" {}
+variable "region" { default = "us-east-1" }
