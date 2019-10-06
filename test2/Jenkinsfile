@@ -1,13 +1,16 @@
 pipeline {
     parameters {
-      string(name: 'Bucket_Name', defaultValue: 'mybucket')
-	    choice(name: 'ENVIRONMENT', choices: ['dev','qa','uat','prod'], description: 'Environment')	    
-	    choice(name: 'TERRAFORM_ACTION', choices: ['plan','apply','destroy'], description: 'Terraform Action')
+		string(name: 'Bucket_Name', defaultValue: 'mybucket')
+	    	choice(name: 'ENVIRONMENT', choices: ['dev','qa','uat','prod'], description: 'Environment')	    
+	    	choice(name: 'TERRAFORM_ACTION', choices: ['plan','apply','destroy'], description: 'Terraform Action')
 
     }
     environment {
+	    bucket_name = "$params.Bucket_Name"
+	    ENVIRONMENT = "$params.ENVIRONMENT"
+	    TERRAFORM_ACTION = "$params.TERRAFORM_ACTION"
     }
-      agent any
+    agent any
       
     stages {
             stage('Create Terraform') {
@@ -19,42 +22,43 @@ pipeline {
                 }
                 steps {
                   script {
-			              withCredentials([                         
+			withCredentials([                         
                         ]){
                             echo "Building Terraform"
-							              buildAppVersion(env.AZURE_SUBSCRIPTION_ID, AZURE_SERVICE_PRINCIPAL_USER_ID, AZURE_SERVICE_PRINCIPAL_PASSWORD, AZURE_TENANT_ID, registry, project_name, SERVICE_NAME, MAJOR, MINOR, VERSION_PREFIX, BUILD_ID)
-						            }
+				terraformS3Backend()
+				buildTerraform()
+			}
 
                   }
 
            }
               
-          stage('Upload File to S3') {
-                  when {
+		stage('Upload File to S3') {
+                  	when {
                         not { environment name: 'TERRAFORM_ACTION', value: 'destroy' }
-                  }
-              steps {
+                  	}
+              		steps {
 
-                sh 'echo "#######################################"'
-                terraformS3Backend()
-                UploadS3()
+                	sh 'echo "#######################################"'
+                
+                	UploadS3()
 
-              }
-            }
-        	stage('Destroy Cluster') {
+             		}
+            	}
+		stage('Destroy Cluster') {
             		when {
                         	environment name: 'TERRAFORM_ACTION', value: 'destroy'
             		}
             		steps {
 			    
-                 sh 'echo "#######################################"'
-				          terraformS3Backend()
+                 		sh 'echo "#######################################"'
+				terraformS3Backend()
 
-                  echo 'Destroy Cluster...'
-                	destroyCluster()
+                  		echo 'Destroy Cluster...'
+                		destroyCluster()
 
 				
-            }
-        }        
+            		}
+        	}        
     }
 }
