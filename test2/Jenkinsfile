@@ -1,0 +1,60 @@
+pipeline {
+    parameters {
+      string(name: 'Bucket_Name', defaultValue: 'mybucket')
+	    choice(name: 'ENVIRONMENT', choices: ['dev','qa','uat','prod'], description: 'Environment')	    
+	    choice(name: 'TERRAFORM_ACTION', choices: ['plan','apply','destroy'], description: 'Terraform Action')
+
+    }
+    environment {
+    }
+      agent any
+      
+    stages {
+            stage('Create Terraform') {
+            	  when {
+                	expression { env.BRANCH_NAME =~ "master" }
+			            not { environment name: 'TERRAFORM_ACTION', value: 'destroy' }
+            	  }
+                environment {
+                }
+                steps {
+                  script {
+			              withCredentials([                         
+                        ]){
+                            echo "Building Terraform"
+							              buildAppVersion(env.AZURE_SUBSCRIPTION_ID, AZURE_SERVICE_PRINCIPAL_USER_ID, AZURE_SERVICE_PRINCIPAL_PASSWORD, AZURE_TENANT_ID, registry, project_name, SERVICE_NAME, MAJOR, MINOR, VERSION_PREFIX, BUILD_ID)
+						            }
+
+                  }
+
+           }
+              
+          stage('Upload File to S3') {
+                  when {
+                        not { environment name: 'TERRAFORM_ACTION', value: 'destroy' }
+                  }
+              steps {
+
+                sh 'echo "#######################################"'
+                terraformS3Backend()
+                UploadS3()
+
+              }
+            }
+        	stage('Destroy Cluster') {
+            		when {
+                        	environment name: 'TERRAFORM_ACTION', value: 'destroy'
+            		}
+            		steps {
+			    
+                 sh 'echo "#######################################"'
+				          terraformS3Backend()
+
+                  echo 'Destroy Cluster...'
+                	destroyCluster()
+
+				
+            }
+        }        
+    }
+}
