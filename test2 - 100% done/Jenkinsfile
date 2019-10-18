@@ -25,9 +25,9 @@ pipeline {
 			withCredentials([                         
                         ]){
                             echo "Building Terraform"
-				terraformS3Backend()
-				buildTerraform()
-			}
+				                    terraformS3Backend()
+				                    buildTerraform()
+			                   }
 
                   }
 		}

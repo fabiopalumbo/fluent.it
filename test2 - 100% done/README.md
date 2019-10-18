@@ -13,3 +13,11 @@ Configuration files describe to Terraform the components needed to run a single 
 Kitchen-Terraform provides a set of Test Kitchen plugins which enable a system to use Test Kitchen to converge a Terraform configuration and verify the resulting Terraform state with InSpec controls.
 
 As Kitchen-Terraform integrates several distinctive technologies in a nontrivial manner, reviewing the documentation of each of the aforementioned products is strongly encouraged.
+
+**Guide Steps**
+
+1) Created Jenkinsfile for deploying Teraform / S3 Bucket for automation of the multibranch pipeline with parameters
+
+2) Created /terraform/main.tf and similars for deploying terraform
+
+3) Created test Kitchen Terrafom .kitchen.yml
