@@ -5,7 +5,9 @@ pipeline {
     environment {
         bucket_name="$params.Bucket_Name" ENVIRONMENT="$params.ENVIRONMENT" TERRAFORM_ACTION="$params.TERRAFORM_ACTION"
     }
-    agent any stages {
+    agent any 
+
+    stages {
         stage('Create Terraform') {
             when {
                 expression {
