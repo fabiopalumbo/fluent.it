@@ -1,11 +1,14 @@
 pipeline {
+    agent any 
     parameters {
-        string(name: 'Bucket_Name', defaultValue: 'mybucket') choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'uat', 'prod'], description: 'Environment') choice(name: 'TERRAFORM_ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Terraform Action')
+        string(name: 'Bucket_Name', defaultValue: 'mybucket')
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'uat', 'prod'], description: 'Environment')
+        choice(name: 'TERRAFORM_ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Terraform Action')
     }
     environment {
         bucket_name="$params.Bucket_Name" ENVIRONMENT="$params.ENVIRONMENT" TERRAFORM_ACTION="$params.TERRAFORM_ACTION"
     }
-    agent any 
+    
 
     stages {
         stage('Create Terraform') {
